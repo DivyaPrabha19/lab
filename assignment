@@ -1,0 +1,57 @@
+
+import random
+names = ["John", "Emma", "Michael", "Olivia", "William", "Ava", "James", "Sophia", "Benjamin", "Isabella", "Daniel", "Mia", "Alexander", "Charlotte", "David", "Amelia", "Joseph", "Evelyn", "Henry", "Abigail", "Samuel", "Harper", "Emily", "Daniel", "Elizabeth", "Matthew", "Sofia", "Luke", "Lily", "Nathan", "Grace"]
+
+def create_result_file(file_path):
+    with open(file_path, 'w') as file:
+        for i in range(30):
+            name = random.choice(names) + " " + random.choice(names)  # Concatenating two random names to simulate full names
+            reg_number = 65432100 + i + 1
+            grades = [random.choice(['O', 'A', 'B', 'C', 'D', 'U']) for _ in range(5)]
+            total_marks = sum([10 if grade == 'O' else 9 if grade == 'A' else 8 if grade == 'B' else 7 if grade == 'C' else 6 if grade == 'D' else 0 for grade in grades])
+            percentage = (total_marks / 50) * 100
+            file.write(f"{name}, {reg_number}, {','.join(grades)}, {total_marks}, {percentage:.2f}%\n")
+
+
+def read_result_file(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+        print(content)
+def analyze_results(input_file, output_file):
+    categories = {
+        "I. Students who score 90% and above": [],
+        "II. Students who score equal to or above 80% and below 90%": [],
+        "III. Students who score equal to or above 70% and below 80%": [],
+        "IV. Students who score below 70%": [],
+        "V. Students having arrear": []
+    }
+
+    with open(input_file, 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            data = line.strip().split(',')
+            name = data[0]
+            percentage = float(data[-1][:-1])
+            if percentage >= 90:
+                categories["I. Students who score 90% and above"].append(name)
+            elif 80 <= percentage < 90:
+                categories["II. Students who score equal to or above 80% and below 90%"].append(name)
+            elif 70 <= percentage < 80:
+                categories["III. Students who score equal to or above 70% and below 80%"].append(name)
+            elif percentage < 70:
+                categories["IV. Students who score below 70%"].append(name)
+            if 'U' in data[2]:
+                categories["V. Students having arrear"].append(name)
+
+    with open(output_file, 'w') as file:
+        for category, students in categories.items():
+            file.write(f"{category}:\n")
+            for student in students:
+                file.write(f"{student}\n")
+            file.write("\n")
+file_path = 'result.txt'
+output_file = 'analysis.txt'
+
+create_result_file(file_path)
+read_result_file(file_path)
+analyze_results(file_path, output_file)
